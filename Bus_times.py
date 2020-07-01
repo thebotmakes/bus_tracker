@@ -1,8 +1,9 @@
-
 import datetime
 import time
 import json
 import requests
+import dothat.lcd as lcd
+import dothat.backlight as backlight
 
 data_link = "http://tfe-opendata.com/api/v1/live_bus_times/36298678"
 
@@ -47,11 +48,42 @@ while True:
         # print(departures) uncomment if you want to see the list of lists combined above
 
         if not non_terms:
-            message = "There are no more buses today."
+            message = time_now + ". No more buses today."
+            r = 0
+            g = 255
+            b = 255
         elif len(departures[1]) == 0:
-            message = "The next bus, the no. " + departures[0][0] + " to " + departures[0][1] + ", is in " + departures[0][2] + " minutes./nThere are no further departures."
+            message = time_now + ". Last bus, " + departures[0][0] + " in " + departures[0][2] + " mins."
+            if int(departures[0][2]) > 10:
+                r = 51
+                g = 255
+                b = 51
+            elif int(departures[0][2]) > 6:
+                r = 255
+                g = 255
+                b = 102
+            else:
+                r = 220
+                g = 20
+                b = 60
         else:
-            message = "The next bus, the no. " + departures[0][0] + " to " + departures[0][1] + ", is in " + departures[0][2] + " minutes.\nThe bus after that, the no. " + departures[1][0] + " to " + departures[1][1] + ", is in " + departures[1][2] + " minutes."
+            message = time_now +" No." + departures[0][0] + " in " + departures[0][2] + " mins. Then no. " + departures[1][0] + " in " + departures[1][2] + " mins."
+            if int(departures[0][2]) > 10:
+                r = 51
+                g = 255
+                b = 51
+            elif int(departures[0][2]) > 6:
+                r = 255
+                g = 255
+                b = 102
+            else:
+                r = 220
+                g = 20
+                b = 60
     print("The time is " + time_now + " on " + date + ".")
-    print(message)
+    lcd.clear()
+    lcd.set_cursor_position(0, 0)
+    lcd.write(message)
+    backlight.rgb(r, g, b)
+    backlight.update()
     time.sleep(10)
