@@ -1,6 +1,8 @@
 ## bus_tracker
 # Tracks the buses outside my house!
 
+![alt text](https://github.com/thebotmakes/bus_tracker/blob/master/IMG_1109.jpg "tracker_image")
+
 This project has been cooking for some time - ever since I found out I could get the bus times for the next two buses leaving from outside my house as JSON data via a link.  Uses a Raspberry Pi Zero with a Display-o-Tron from Pimoroni - I'm a sucker for an LCD display, and this has the nice feature of being able to adjust the background colour, which is ideal for this.  What it does:
 
 * Gets the bus data for the stop outside my house (departure time, route no and destination - although I don't display destination - Display-o-Tron didn't have enough characters!)
