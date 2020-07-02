@@ -11,17 +11,25 @@ while True:
     now = datetime.datetime.now()
     time_now = now.strftime("%H:%M")
     date = now.strftime("%d/%m/%Y")
-
-    response = requests.get(data_link)
-    bus_data = json.loads(response.text)
-    #print(bus_data)  uncomment to see the json data
+    
+    try:
+        response = requests.get(data_link)
+        bus_data = json.loads(response.text)
+    except ConnectionError:
+        message = "Can't load data"
+    
+    print(bus_data)  #uncomment to see the json data
 
     if not bus_data:
-        departures = []
+        message = " No more   buses today!"
+        r = 0
+        g = 255
+        b = 255
+    
     else:
         bus_dict = bus_data[0]
         dict_len = len(bus_dict['departures'])
-        #print(dict_len) uncomment to see number of entries in json data
+        print(dict_len) #uncomment to see number of entries in json data
 
         non_terms = []
         for n in range(dict_len):
@@ -30,7 +38,7 @@ while True:
             else:
                 non_terms = non_terms
 
-        #print(non_terms) uncomment to see a check that we're ony pulling through non-terminating buses
+        print(non_terms) #uncomment to see a check that we're ony pulling through non-terminating buses
 
         departures = []
 
@@ -45,15 +53,15 @@ while True:
             # print(data) uncomment if you want to see the data for each departure
             departures.append(data)
 
-        # print(departures) uncomment if you want to see the list of lists combined above
+        print(departures) #uncomment if you want to see the list of lists combined above
 
         if not non_terms:
-            message = time_now + ". No more buses today."
+            message = ". No more  buses today."
             r = 0
             g = 255
             b = 255
-        elif len(departures[1]) == 0:
-            message = time_now + ". Last bus, " + departures[0][0] + " in " + departures[0][2] + " mins."
+        elif len(departures) == 1:
+            message = ". No. " + departures[0][0] + " in  " + departures[0][2] + " mins.  No more buses."
             if int(departures[0][2]) > 10:
                 r = 51
                 g = 255
@@ -61,13 +69,13 @@ while True:
             elif int(departures[0][2]) > 6:
                 r = 255
                 g = 255
-                b = 102
+                b = 0
             else:
                 r = 220
                 g = 20
                 b = 60
         else:
-            message = time_now +" No." + departures[0][0] + " in " + departures[0][2] + " mins. Then no. " + departures[1][0] + " in " + departures[1][2] + " mins."
+            message = " No. " + departures[0][0] + " in  " + departures[0][2] + " mins. Next " + departures[1][0] + "  in " + departures[1][2] + " mins."
             if int(departures[0][2]) > 10:
                 r = 51
                 g = 255
@@ -75,15 +83,16 @@ while True:
             elif int(departures[0][2]) > 6:
                 r = 255
                 g = 255
-                b = 102
+                b = 0
             else:
                 r = 220
                 g = 20
                 b = 60
     print("The time is " + time_now + " on " + date + ".")
+    fin_message = time_now + message
     lcd.clear()
     lcd.set_cursor_position(0, 0)
-    lcd.write(message)
+    lcd.write(fin_message)
     backlight.rgb(r, g, b)
     backlight.update()
     time.sleep(10)
